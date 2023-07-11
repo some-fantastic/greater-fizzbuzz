@@ -1,0 +1,35 @@
+name: Test container
+
+on:
+  workflow_dispatch: # build on demand
+  pull_request:
+    branches: main # build as a PR check
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "LICENSE"
+
+jobs:
+  build:
+    name: Build the container
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v3
+
+      - name: Set short SHA
+        run: echo "SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build the container
+        uses: docker/build-push-action@v4
+        with:
+          file: ./Dockerfile
+          push: false
+          tags: ghcr.io/${{ github.repository }}/fizzbuzz:${{ env.SHA_SHORT }}
+
+      - name: Run the container
+        run: docker run --rm -p 5000:5000 ghcr.io/${{ github.repository }}/fizzbuzz:${{ env.SHA_SHORT }}
