@@ -20,7 +20,7 @@ on:
         type: string
 
 jobs:
-  fetch-and-apply-approved-patch:
+  apply-approved-patch:
     runs-on: ubuntu-latest
     #
     # for real usage, `runs-on` would be a self-hosted runner with the following installed
@@ -31,13 +31,14 @@ jobs:
     steps:
       - name: Fetch the zipped patch file
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # list workflow run artifacts
           # https://docs.github.com/en/enterprise-cloud@latest/rest/actions/artifacts?apiVersion=2022-11-28
           URL=$(gh api \
             -H "Accept: application/vnd.github.v3+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             /repos/some-fantastic/lesser-fizzbuzz/actions/runs/${{ github.event.inputs.run-id }}/artifacts | \
             jq -r '.artifacts[].archive_download_url')
           curl -L -o patch.zip $URL
@@ -92,7 +93,8 @@ jobs:
 
   create-failure-issue:
     runs-on: ubuntu-latest
-    if: failure()
+    needs: apply-approved-patch
+    if: ${{ failure() }}
     #
     # for real usage, `runs-on` would be a self-hosted runner with the following installed
     # - git
