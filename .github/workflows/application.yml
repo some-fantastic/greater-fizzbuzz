@@ -41,7 +41,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/some-fantastic/lesser-fizzbuzz/actions/runs/${{ github.event.inputs.run-id }}/artifacts | \
             jq -r '.artifacts[].archive_download_url')
-          curl -L -o patch.zip $URL
+          curl -L -o -H "Authorization: token ${{ github.token }}" patch.zip $URL
 
       - name: Do the antivirus stuff (again)
         shell: bash
@@ -102,11 +102,15 @@ jobs:
     # - (usually) an antivirus program
     #
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Create tracking issue
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue create --title "Patch ${{ github.event.inputs.patch-sha }}" \
+          gh issue create -R some-fantastic/greater-fizzbuzz \
+            --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
             Please review!"
