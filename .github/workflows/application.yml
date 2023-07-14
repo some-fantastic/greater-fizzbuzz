@@ -70,15 +70,6 @@ jobs:
           git config --global user.email "patchpromotion@mail.tld"
           git config --global user.name "Patch Promotion [bot]"
 
-      - name: Apply patch to new branch
-        shell: bash
-        run: |
-          # create patch branch
-          git checkout -b patch-${{ github.event.inputs.patch-sha }}
-
-          # apply patch
-          git apply ${{ github.event.inputs.patch-sha }}.patch
-
       - name: figure out where we're at
         shell: bash
         run: |
@@ -87,10 +78,18 @@ jobs:
           ls -lah ..
           git status
 
+      - name: Apply patch to new branch
+        shell: bash
+        run: |
+          # create patch branch
+          git checkout -b patch-${{ github.event.inputs.patch-sha }}
+
+          # apply patch
+          git apply ../${{ github.event.inputs.patch-sha }}.patch
+
       - name: Commit and push to new branch
         shell: bash
         run: |
-          mv ../${{ github.event.inputs.patch-sha }}.patch .
           git add .
           git commit -m "Apply patch ${{ github.event.inputs.patch-sha }}"
           git push --set-upstream origin patch-${{ github.event.inputs.patch-sha }}
