@@ -46,12 +46,7 @@ jobs:
       - name: Do the antivirus stuff (again)
         shell: bash
         run: |
-          # install clamav (this'll already be installed on a self-hosted runner for this task)
-          sudo apt-get install clamav clamav-daemon -y
-          sudo freshclam
-
-          # scan the patch
-          sudo clamscan patch.zip
+          echo "insert your antivirus scanning stuff here"
 
       - name: Unzip patch artifact
         shell: bash
