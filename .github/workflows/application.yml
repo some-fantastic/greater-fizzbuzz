@@ -63,20 +63,13 @@ jobs:
         shell: bash
         run: |
           unzip patch.zip
+          rm patch.zip
 
       - name: Set up git
         shell: bash
         run: |
           git config --global user.email "patchpromotion@mail.tld"
           git config --global user.name "Patch Promotion [bot]"
-
-      - name: figure out where we're at
-        shell: bash
-        run: |
-          pwd
-          ls -lah .
-          ls -lah ..
-          git status
 
       - name: Apply patch to new branch
         shell: bash
@@ -85,7 +78,10 @@ jobs:
           git checkout -b patch-${{ github.event.inputs.patch-sha }}
 
           # apply patch
-          git apply ../${{ github.event.inputs.patch-sha }}.patch
+          git apply ${{ github.event.inputs.patch-sha }}.patch
+
+          # delete patch file
+          rm ${{ github.event.inputs.patch-sha }}.patch
 
       - name: Commit and push to new branch
         shell: bash
