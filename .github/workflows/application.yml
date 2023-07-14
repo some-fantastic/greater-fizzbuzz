@@ -47,6 +47,7 @@ jobs:
           URL=$(gh api \
             -H "Accept: application/vnd.github.v3+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
+            --hostname github.com \
             /repos/some-fantastic/lesser-fizzbuzz/actions/runs/${{ github.event.inputs.run-id }}/artifacts | \
             jq -r '.artifacts[].archive_download_url')
           curl -H "Authorization: token ${{ secrets.READ_ORG }}" -L -o patch.zip $URL
