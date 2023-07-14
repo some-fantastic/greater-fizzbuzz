@@ -41,12 +41,16 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/some-fantastic/lesser-fizzbuzz/actions/runs/${{ github.event.inputs.run-id }}/artifacts | \
             jq -r '.artifacts[].archive_download_url')
-          curl -H "Authorization: token ${{ github.token }}" -L -o patch.zip $URL
+          curl -H "Authorization: token ${{ secrets.READ_ORG }}" -L -o patch.zip $URL
 
       - name: Do the antivirus stuff (again)
         shell: bash
         run: |
-          echo "insert your antivirus scanning stuff here"
+          # install clamav (this'll already be installed on a self-hosted runner for this task)
+          sudo apt-get install clamav -y
+
+          # scan the patch
+          sudo clamscan patch.zip
 
       - name: Unzip patch artifact
         shell: bash
