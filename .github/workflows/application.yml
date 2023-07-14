@@ -79,6 +79,14 @@ jobs:
           # apply patch
           git apply ${{ github.event.inputs.patch-sha }}.patch
 
+      - name: figure out where we're at
+        shell: bash
+        run: |
+          pwd
+          ls -lah .
+          ls -lah ..
+          git status
+
       - name: Commit and push to new branch
         shell: bash
         run: |
