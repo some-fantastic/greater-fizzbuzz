@@ -55,7 +55,7 @@ jobs:
       - name: Unzip patch artifact
         shell: bash
         run: |
-          tar -xvf patch.zip
+          unzip patch.zip
 
       - name: Check out the repository
         uses: actions/checkout@v3
