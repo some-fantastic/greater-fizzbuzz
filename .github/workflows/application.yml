@@ -48,6 +48,7 @@ jobs:
         run: |
           # install clamav (this'll already be installed on a self-hosted runner for this task)
           sudo apt-get install clamav -y
+          sudo freshclam
 
           # scan the patch
           clamscan patch.zip
