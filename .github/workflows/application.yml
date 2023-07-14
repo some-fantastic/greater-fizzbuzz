@@ -22,6 +22,9 @@ on:
 jobs:
   apply-approved-patch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     #
     # for real usage, `runs-on` would be a self-hosted runner with the following installed
     # - git
@@ -37,7 +40,7 @@ jobs:
       - name: Fetch the zipped patch file
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.READ_ORG }}
         run: |
           # list workflow run artifacts
           # https://docs.github.com/en/enterprise-cloud@latest/rest/actions/artifacts?apiVersion=2022-11-28
@@ -92,6 +95,8 @@ jobs:
 
       - name: Create pull request
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
@@ -101,6 +106,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: apply-approved-patch
     if: ${{ failure() }}
+    permissions:
+      contents: read
+      issues: write
     #
     # for real usage, `runs-on` would be a self-hosted runner with the following installed
     # - git
