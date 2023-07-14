@@ -43,14 +43,14 @@ jobs:
             jq -r '.artifacts[].archive_download_url')
           curl -H "Authorization: token ${{ secrets.READ_ORG }}" -L -o patch.zip $URL
 
-      - name: Do the antivirus stuff (again)
-        shell: bash
-        run: |
-          # install clamav (this'll already be installed on a self-hosted runner for this task)
-          sudo apt-get install clamav -y
+      # - name: Do the antivirus stuff (again)
+      #   shell: bash
+      #   run: |
+      #     # install clamav (this'll already be installed on a self-hosted runner for this task)
+      #     sudo apt-get install clamav -y
 
-          # scan the patch
-          sudo clamscan patch.zip
+      #     # scan the patch
+      #     sudo clamscan patch.zip
 
       - name: Unzip patch artifact
         shell: bash
