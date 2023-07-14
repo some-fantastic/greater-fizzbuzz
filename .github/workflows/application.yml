@@ -29,6 +29,11 @@ jobs:
     # - (usually) an antivirus program
     #
     steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+        with:
+          ref: main # explicitly using the default branch
+
       - name: Fetch the zipped patch file
         shell: bash
         env:
@@ -58,11 +63,6 @@ jobs:
         shell: bash
         run: |
           unzip patch.zip
-
-      - name: Check out the repository
-        uses: actions/checkout@v3
-        with:
-          ref: main # explicitly using the default branch
 
       - name: Set up git
         shell: bash
