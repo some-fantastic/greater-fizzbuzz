@@ -1,0 +1,108 @@
+name: "Fetch and apply approved patch"
+
+on:
+  workflow_dispatch:
+    inputs:
+      #
+      # for non-demo usage, you should would comment out the run-id input and instead use an input that'd uniquely identify
+      # the patch from your system to hold approved artifacts. as this is a demo between GHEC and GHEC, we're using the run-id.
+      #
+      # for a private demo using self-hosted GitHub in network isolation, please contact your GitHub sales team or use the link below.
+      # https://github.com/enterprise/contact
+      #
+      patch-sha:
+        description: "SHA of the patch to apply"
+        required: true
+        type: string
+      run-id:
+        description: "Run ID from lesser-fizzbuzz. for real usage, change to the download URL instead"
+        required: true
+        type: string
+
+jobs:
+  fetch-and-apply-approved-patch:
+    runs-on: ubuntu-latest
+    #
+    # for real usage, `runs-on` would be a self-hosted runner with the following installed
+    # - git
+    # - github cli
+    # - (usually) an antivirus program
+    #
+    steps:
+      - name: Fetch the zipped patch file
+        shell: bash
+        run: |
+          # list workflow run artifacts
+          # https://docs.github.com/en/enterprise-cloud@latest/rest/actions/artifacts?apiVersion=2022-11-28
+          URL=$(gh api \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            /repos/some-fantastic/lesser-fizzbuzz/actions/runs/${{ github.event.inputs.run-id }}/artifacts | \
+            jq -r '.artifacts[].archive_download_url')
+          curl -L -o patch.zip $URL
+
+      - name: Do the antivirus stuff (again)
+        shell: bash
+        run: |
+          # install clamav (this'll already be installed on a self-hosted runner for this task)
+          sudo apt-get install clamav -y
+
+          # scan the patch
+          clamscan patch.zip
+
+      - name: Unzip patch artifact
+        shell: bash
+        run: |
+          unzip patch.zip
+
+      - name: Check out the repository
+        uses: actions/checkout@v3
+        with:
+          ref: main # explicitly using the default branch
+
+      - name: Set up git
+        shell: bash
+        run: |
+          git config --global user.email "patchpromotion@mail.tld"
+          git config --global user.name "Patch Promotion [bot]"
+
+      - name: Apply patch to new branch
+        shell: bash
+        run: |
+          # create patch branch
+          git checkout -b patch-${{ github.event.inputs.patch-sha }}
+
+          # apply patch
+          git apply ${{ github.event.inputs.patch-sha }}.patch
+
+      - name: Commit and push to new branch
+        shell: bash
+        run: |
+          git add .
+          git commit -m "Apply patch ${{ github.event.inputs.patch-sha }}"
+          git push --set-upstream origin patch-${{ github.event.inputs.patch-sha }}
+
+      - name: Create pull request
+        shell: bash
+        run: |
+          gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
+            --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
+            --body "Apply patch ${{ github.event.inputs.patch-sha }}"
+
+  create-failure-issue:
+    runs-on: ubuntu-latest
+    if: failure()
+    #
+    # for real usage, `runs-on` would be a self-hosted runner with the following installed
+    # - git
+    # - github cli
+    # - (usually) an antivirus program
+    #
+    steps:
+      - name: Create tracking issue
+        shell: bash
+        run: |
+          gh issue create --title "Patch ${{ github.event.inputs.patch-sha }}" \
+            --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
+            Please review!"
