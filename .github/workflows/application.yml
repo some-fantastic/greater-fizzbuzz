@@ -56,6 +56,7 @@ jobs:
         shell: bash
         run: |
           # install clamav (this'll already be installed on a self-hosted runner for this task)
+          sudo apt-get update
           sudo apt-get install clamav -y
           sudo systemctl stop clamav-freshclam
           sudo freshclam
