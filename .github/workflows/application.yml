@@ -98,12 +98,9 @@ jobs:
       - name: Create pull request
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          GH_HOST: ${{ github.server_url }}
         run: |
-          if [[ ${{ github.server_url}} != "https://github.com" ]]
-          then
-            gh auth login --hostname $(echo ${{ github.server_url }} | sed 's/https:\/\///g')
-          fi
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
             --body "Apply patch ${{ github.event.inputs.patch-sha }}"
@@ -128,7 +125,8 @@ jobs:
       - name: Create tracking issue
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          GH_HOST: ${{ github.server_url }}
         run: |
           if [[ ${{ github.server_url}} != "https://github.com" ]]
           then
