@@ -15,7 +15,7 @@ on:
         required: true
         type: string
       run-id:
-        description: "Run ID from lesser-fizzbuzz. for real usage, change to the download URL instead"
+        description: "Run ID from lesser-fizzbuzz. For real usage, change to the download URL instead."
         required: true
         type: string
 
@@ -99,6 +99,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh auth login --hostname ${{ github.server_url }} --with-token ${{ github.token }}
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
             --body "Apply patch ${{ github.event.inputs.patch-sha }}"
@@ -125,6 +126,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh auth login --hostname ${{ github.server_url }} --with-token ${{ github.token }}
           gh issue create -R some-fantastic/greater-fizzbuzz \
             --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
