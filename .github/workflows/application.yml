@@ -37,6 +37,12 @@ jobs:
         with:
           ref: main # explicitly using the default branch
 
+      - name: Get GHES URL
+        shell: bash
+        run: |
+          GHE_HOST = $( echo ${{ github.server_url }} | sed 's/https:\/\///g' )
+          echo "GHE_HOST=$GHE_HOST" >> $GITHUB_ENV
+
       - name: Fetch the zipped patch file
         shell: bash
         env:
@@ -99,10 +105,8 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
-          GH_HOST: ${{ github.server_url }}
+          GH_HOST: ${{ env.GHE_HOST }}
         run: |
-          git remote -v
-          pwd
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
             --body "Apply patch ${{ github.event.inputs.patch-sha }}"
@@ -124,13 +128,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Get GHES URL
+        shell: bash
+        run: |
+          GHE_HOST = $( echo ${{ github.server_url }} | sed 's/https:\/\///g' )
+          echo "GHE_HOST=$GHE_HOST" >> $GITHUB_ENV
+
       - name: Create tracking issue
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
-          GH_HOST: ${{ github.server_url }}
+          GH_HOST: ${{ env.GHE_HOST }}
         run: |
-          git remote -v
           gh issue create -R some-fantastic/greater-fizzbuzz \
             --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
