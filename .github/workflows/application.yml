@@ -101,7 +101,8 @@ jobs:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
           GH_HOST: ${{ github.server_url }}
         run: |
-          cd $GITHUB_WORKSPACE
+          git remote -v
+          pwd
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
             --body "Apply patch ${{ github.event.inputs.patch-sha }}"
@@ -129,7 +130,7 @@ jobs:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
           GH_HOST: ${{ github.server_url }}
         run: |
-          cd $GITHUB_WORKSPACE
+          git remote -v
           gh issue create -R some-fantastic/greater-fizzbuzz \
             --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
