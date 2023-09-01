@@ -128,10 +128,6 @@ jobs:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
           GH_HOST: $( echo ${{ github.server_url }} | sed 's/https:\/\///g')
         run: |
-          if [[ ${{ github.server_url}} != "https://github.com" ]]
-          then
-            gh auth login --hostname $(echo ${{ github.server_url }} | sed 's/https:\/\///g')
-          fi
           gh issue create -R some-fantastic/greater-fizzbuzz \
             --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
