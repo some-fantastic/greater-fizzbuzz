@@ -104,6 +104,7 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token}}
           GH_HOST: ${{ env.GHE_HOST }}
         run: |
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
@@ -136,6 +137,7 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token}}
           GH_HOST: ${{ env.GHE_HOST }}
         run: |
           gh issue create -R some-fantastic/greater-fizzbuzz \
