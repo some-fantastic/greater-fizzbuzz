@@ -100,7 +100,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh auth login --hostname ${{ github.server_url }}
+          gh auth login --hostname $(echo ${{ github.server_url }} | sed 's/https:\/\///g')
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
             --body "Apply patch ${{ github.event.inputs.patch-sha }}"
@@ -127,7 +127,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh auth login --hostname ${{ github.server_url }}
+          gh auth login --hostname $(echo ${{ github.server_url }} | sed 's/https:\/\///g')
           gh issue create -R some-fantastic/greater-fizzbuzz \
             --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
