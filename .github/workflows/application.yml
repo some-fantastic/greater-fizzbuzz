@@ -99,8 +99,9 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
-          GH_HOST: $( echo ${{ github.server_url }} | sed 's/https:\/\///g')
+          GH_HOST: ${{ github.server_url }}
         run: |
+          cd $GITHUB_WORKSPACE
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
             --body "Apply patch ${{ github.event.inputs.patch-sha }}"
@@ -126,8 +127,9 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
-          GH_HOST: $( echo ${{ github.server_url }} | sed 's/https:\/\///g')
+          GH_HOST: ${{ github.server_url }}
         run: |
+          cd $GITHUB_WORKSPACE
           gh issue create -R some-fantastic/greater-fizzbuzz \
             --title "Patch ${{ github.event.inputs.patch-sha }}" \
             --body "Patch ${{ github.event.inputs.patch-sha }} has failed to be applied to the main branch. \
