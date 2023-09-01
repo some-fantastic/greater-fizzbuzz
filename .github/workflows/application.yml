@@ -99,7 +99,7 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
-          GH_HOST: ${{ github.server_url }}
+          GH_HOST: $( echo ${{ github.server_url }} | sed 's/https:\/\///g')
         run: |
           gh pr create --base main --head patch-${{ github.event.inputs.patch-sha }} \
             --title "Apply patch ${{ github.event.inputs.patch-sha }}" \
@@ -126,7 +126,7 @@ jobs:
         shell: bash
         env:
           GH_ENTERPRISE_TOKEN: ${{ github.token }}
-          GH_HOST: ${{ github.server_url }}
+          GH_HOST: $( echo ${{ github.server_url }} | sed 's/https:\/\///g')
         run: |
           if [[ ${{ github.server_url}} != "https://github.com" ]]
           then
