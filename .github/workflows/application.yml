@@ -40,8 +40,7 @@ jobs:
       - name: Get GHES URL
         shell: bash
         run: |
-          GHE_HOST = $( echo ${{ github.server_url }} | sed 's/https:\/\///g' )
-          echo "GHE_HOST=$GHE_HOST" >> $GITHUB_ENV
+          echo "GHE_HOST=$( echo ${{ github.server_url }} | sed 's/https:\/\///g' )" >> $GITHUB_ENV
 
       - name: Fetch the zipped patch file
         shell: bash
@@ -131,8 +130,7 @@ jobs:
       - name: Get GHES URL
         shell: bash
         run: |
-          GHE_HOST = $( echo ${{ github.server_url }} | sed 's/https:\/\///g' )
-          echo "GHE_HOST=$GHE_HOST" >> $GITHUB_ENV
+          echo "GHE_HOST=$( echo ${{ github.server_url }} | sed 's/https:\/\///g' )" >> $GITHUB_ENV
 
       - name: Create tracking issue
         shell: bash
