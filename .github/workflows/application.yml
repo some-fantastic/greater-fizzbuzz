@@ -33,7 +33,7 @@ jobs:
     #
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: main # explicitly using the default branch
 
@@ -126,7 +126,7 @@ jobs:
     #
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get GHES URL
         shell: bash
